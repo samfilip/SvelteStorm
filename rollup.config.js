@@ -1,6 +1,6 @@
 import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
 //import livereload from 'rollup-plugin-livereload';
 //import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
@@ -19,7 +19,7 @@ export default {
 		format: 'iife',
 		name: 'app',
 		dir: 'public',
-		inlineDynamicImports : true
+		inlineDynamicImports : true,
 	},
 	onwarn: function(warning) {
 		// Skip certain warnings
@@ -39,19 +39,12 @@ export default {
 			},
 			emitCss: true
 		}),
-		// ts({
-		// 	typescript
-		//   }),
-		// If you have external dependencies installed from
-		// npm, you'll most likely need these plugins. In
-		// some cases you'll need additional configuration —
-		// consult the documentation for details:
-		// https://github.com/rollup/rollup-plugin-commonjs
 		resolve({
 			browser: true,
 			dedupe: importee => importee === 'svelte' || importee.startsWith('svelte/'),
 			preferBuiltins: false
 		}),
+		// monaco(),
 		postcss({
 			extract: true,
 			minimize: true,
@@ -63,18 +56,10 @@ export default {
 				}]
 			]
 		}),
-		// monaco(),
-		commonjs(),
-
-        !production & serve(),
-		// Watch the `public` directory and refresh the
-		// browser on changes when not in production
-		// livereload({
-		// 		watch: 'public',
-		// }),
-
-		// If we're building for production (npm run build
-		// instead of npm run dev), minify
+		commonjs({
+			exclude: ['node_modules/monaco-editor/**']
+		}),
+    !production & serve(),
 		production && terser()
 	],
 	watch: {
