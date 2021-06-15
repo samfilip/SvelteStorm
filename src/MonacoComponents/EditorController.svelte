@@ -1,6 +1,6 @@
 <script>
-  import Monaco from '../Monaco.svelte';
-  import DirectoryData from '../../Utilities/DirectoryStore';
+  import Monaco from './Monaco.svelte';
+  import DirectoryData from '../Utilities/DirectoryStore';
 
   const { remote, ipcRenderer } = require('electron');
   const fs = require('fs');
@@ -17,40 +17,36 @@
   let title = 'Svelte Storm';
   let count = 0;
 
-  function addTab(value = [''], editorLang = 'html', fileName='NewTab.html', filePath, language='html') {
+  function addTab(file) {
+    console.log(file.ext)
     count = count + 1;
     let duplicate = false;
     tabs.map((tab) => {
-      if (tab.filePath === filePath) {
+      if (tab.filePath === file.filePath) {
         duplicate = true;
         count = count-1;
       }
     })
+    file.tabId = count;
     if (!duplicate) {
-      tabs = [ ...tabs, { editorValue: value, editorLang: getLanguage(editorLang), fileName: fileName, filePath: filePath, tabId: count, ext: language }];
+      tabs = [ 
+        ...tabs,
+        file
+      ];
     }
   };
 
   function deleteTab(targetId) {
-    tabs = tabs.filter((t) => t.tabId != targetId)
+    const filtered = tabs.filter((t) => t.tabId != targetId);
+    tabs = filtered;
     activeEditor = 1;
     activeTabValue = 1;
   }
-  // const getIndex = (tab) => {
-  //   let idx; 
-  //   tabs.forEach((el, i) => { 
-  //     if (el.tabId === tab) {
-  //       idx = i;
-  //     }
-  //   });
-  //   return idx
-  // }
-  const handleClick = (tabId) => () => {
-    console.log('handleClick input', tabId)
-    console.log('tabs: ', tabs)
-    activeTabValue = tabId;
+
+  const handleClick = (tab) => () => {
+    activeTabValue = tab.tabId;
     activeEditor = activeTabValue;
-    console.log('handletab activeeditor:', activeEditor)
+    currentWindow.setTitle(tab.fileName);
   }
   
   const getLanguage = (lang) => {
@@ -58,8 +54,10 @@
         case 'js':
           return 'javascript';
         case 'jsx':
-          return 'javascript';
+          return 'react';
         case 'ts':
+          return 'typescript';
+        case 'tsx':
           return 'typescript';
         case 'json':
           return 'json';
@@ -71,22 +69,28 @@
           return 'markdown';
         case 'svelte':
           return 'html';
+        case 'yaml':
+          return 'yaml';
         default:
-          return undefined;
+          return lang;
       }
   }
 
   ipcRenderer.on('file-opened', function (evt, file, content) {
-      value = content.split(/\r?\n/);
+      const newTab = {}
+      newTab.editorValue = content.split(/\r?\n/);
       filePath = (file);
       fileName = file.slice().split('/').pop();
       language = file.slice().split('.').pop();
-      addTab(value, language, fileName, filePath, language);
+      newTab.ext = language;
+      newTab.editorLang = getLanguage(language);
+      newTab.filePath = filePath;
+      newTab.fileName = fileName;
+      addTab(newTab);
       if (file) { title = `${path.basename(file)} - ${title}`; }
-      currentWindow.setTitle(title);
   });
 
-  const unsub = DirectoryData.subscribe(data => {
+  DirectoryData.subscribe(data => {
       if (data.fileRead) {
         readData = fs.readFileSync(data.openFilePath).toString();
         value = readData.split(/\r?\n/);
@@ -94,7 +98,7 @@
         language = path.basename(data.openFilePath).split('.').pop();
         if (data.openFilePath) { title = `${path.basename(data.openFilePath)} - ${title}`; }
         currentWindow.setTitle(title);
-        // addTab(value, language, fileName, data.openFilePath, language);
+        addTab(value, language, fileName, data.openFilePath, language);
       }
   });
 
@@ -104,7 +108,7 @@
     {#each tabs as tab}
     <li class={activeTabValue === tab.tabId ? 'active' : ''}>
       <span class="tab-span"
-        on:click={handleClick(tab.tabId)}
+        on:click={handleClick(tab)}
       >
         <img src="/Users/samuelfilip/keepItSvelte/SvelteStorm/src/icons/file_type_{tab.ext}.svg" 
           alt={''}

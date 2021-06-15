@@ -1,6 +1,6 @@
 <script>
     import FileDir from './Directory/FileDir.svelte'
-    import NewTabs from './MonacoComponents/Tabs/NewTabs.svelte';
+    import NewTabs from './MonacoComponents/EditorController.svelte';
     import XTerm from './XTerm.svelte';
     
     export let orientation = 'columns';
