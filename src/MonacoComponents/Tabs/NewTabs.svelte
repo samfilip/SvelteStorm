@@ -8,8 +8,8 @@
   const currentWindow = remote.getCurrentWindow();
   
   export let tabs = [];
-  let activeTabValue = 0;
-  let activeEditor = 0;
+  export let activeTabValue = 1;
+  let activeEditor = 1;
 
   let value = ['This', 'is', 'SvelteStorm'];
   let language = 'html';
@@ -32,24 +32,19 @@
   };
 
   function deleteTab(targetId) {
-    console.log('deleteTab input: ', targetId);
     tabs = tabs.filter((t) => t.tabId != targetId)
-    activeTabValue = (tabs[0].tabId);
-    activeEditor = activeTabValue;
-
+    activeEditor = 1;
+    activeTabValue = 1;
   }
-
-  const getIndex = (tab) => {
-    let ind; 
-    tabs.forEach((el, i) => { 
-      console.log(el.tabId, i, tab)
-      if (el.tabId === tab) {
-        ind = i;
-      }
-    });
-    return ind
-  }
-
+  // const getIndex = (tab) => {
+  //   let idx; 
+  //   tabs.forEach((el, i) => { 
+  //     if (el.tabId === tab) {
+  //       idx = i;
+  //     }
+  //   });
+  //   return idx
+  // }
   const handleClick = (tabId) => () => {
     console.log('handleClick input', tabId)
     console.log('tabs: ', tabs)
@@ -99,7 +94,7 @@
         language = path.basename(data.openFilePath).split('.').pop();
         if (data.openFilePath) { title = `${path.basename(data.openFilePath)} - ${title}`; }
         currentWindow.setTitle(title);
-        addTab(value, language, fileName, data.openFilePath, language);
+        // addTab(value, language, fileName, data.openFilePath, language);
       }
   });
 
@@ -127,9 +122,8 @@
     {/each}
   </ul>
   
-  {#if activeEditor >= 0 && tabs.length}
+  {#if tabs.length}
     <div class="editor-body">
-      {console.log(tabs[activeEditor], activeEditor)}
         <Monaco
           class="childClass current"
           bind:value={tabs[(activeEditor-1)].editorValue}
@@ -192,6 +186,7 @@
     margin-top: 3px;
     /* margin-bottom: 0; */
   }
+
   .delete-button {
     margin-left: 5px;
     border-right: black;
