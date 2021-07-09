@@ -1,4 +1,4 @@
-import { resolve, join } from 'path';
+import { join } from 'path';
 import { defineConfig } from 'vite';
 import MonacoEditorNlsPlugin, {
     esbuildPluginMonacoEditorNls,
@@ -6,11 +6,11 @@ import MonacoEditorNlsPlugin, {
 } from 'vite-plugin-monaco-editor-nls';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 
 const PACKAGE_ROOT = __dirname;
 const prefix = `monaco-editor/esm/vs`;
 
-// https://vitejs.dev/config/
 export default defineConfig({
     server: {
       open: false, // do not open the browser as we use electron
@@ -19,14 +19,19 @@ export default defineConfig({
         root: join(PACKAGE_ROOT, '../../'),
       },
     },
-    root: resolve(PACKAGE_ROOT, 'public') + '/',
+    root: join(PACKAGE_ROOT, 'public') + '/',
     base: '',
     plugins: [
         MonacoEditorNlsPlugin({locale: Languages.en_gb}),
         svelte({
           emitCss: true
         }),
-        commonjs()
+        resolve({browser: true,
+            dedupe: importee => importee === 'svelte' || importee.startsWith('svelte/'),
+            preferBuiltins: true,
+        }),
+        commonjs(),
+        
     ],
     build: {
         sourcemap: true,
@@ -41,7 +46,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            '@': resolve('./src'),
+            '@': join('./src'),
         },
     },
     optimizeDeps: {

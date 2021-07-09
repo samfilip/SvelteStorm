@@ -45,6 +45,7 @@
   "dependencies": {
     "@babel/core": "^7.14.3",
     "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
     "electron-reload": "^1.5.0",
     "electron-squirrel-startup": "^1.0.0",
