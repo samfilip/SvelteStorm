@@ -1,14 +1,13 @@
 <script>
     import FileDir from './Directory/FileDir.svelte'
-    import NewTabs from './MonacoComponents/Tabs/NewTabs.svelte';
     import XTerm from './XTerm.svelte';
+    import Editor from './MonacoComponents/Editor.svelte';
     import StateManager from './StateManager/StateManager.svelte'
-
     export let orientation = 'columns';
     export let localhost;
 
-  let value = ""
-	let submit = false
+    let value = ""
+	  let submit = false
   
 	
 	const handleSubmit = () => {
@@ -28,10 +27,6 @@
 		}
 	}
 
-  let tabs = []
-
-  console.log(localhost)
-
   </script>
   
   <style>
@@ -44,16 +39,16 @@
   .wrapper {
       height: 100%;
       display: grid;
-      border: 1px solid rgb(226, 142, 45);
-      grid-gap: 1px;
+      border: 1px solid rgb(228, 81, 13);
       grid-template-columns: min-content;
       grid-template-rows: 1fr;
-      background-color: rgb(248, 246, 246);
+      background-color: rgb(39, 38, 38);
       color: #444;
   }
   
   .box {
-    background-color: rgb(233, 217, 186);
+    background-color: rgb(39, 38, 38);
+    border: 1px solid rgb(228, 81, 13);
     color: rgb(226, 142, 45);
     border-radius: 0px;
     padding: 10px;
@@ -145,7 +140,7 @@
       </div>
       <div class="box b">
           <!-- svelte-ignore missing-declaration -->
-          <NewTabs class="childClass" {tabs}/>
+          <Editor class="childClass" />
       </div>
       <div class="box c root">
         <StateManager />

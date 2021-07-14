@@ -1,5 +1,9 @@
 **/node_modules
 **/package-lock.json
-public/bundle**
-public/svelte**
-public/
+public/bundle.**
+public/svelte.**
+**/public
+release-builds
+
+/bundle
+bundle

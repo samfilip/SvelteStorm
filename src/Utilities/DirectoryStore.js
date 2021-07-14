@@ -1,6 +1,7 @@
 import {writable} from 'svelte/store';
 
 const DirectoryData = writable({
+  mainDir: '',
   fileTree: [],
   openFilePath :'',
   fileRead: false,
@@ -10,8 +11,13 @@ const DirectoryData = writable({
   deleteFile: false,
   activeDir : '',
   createFile: false,
-  createFolder: false
+  createFolder: false,
+  createMainFile: false,
+  createMainFolder: false,
+  reload: false,
+  activeFolder : ''
 });
 
+const openTabs = writable([]);
 
-export default DirectoryData; 
+export { DirectoryData, openTabs }; 
